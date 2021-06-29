@@ -3,6 +3,7 @@
 //      ----- dont delete this file -----
 // -------------------------------------------
 include_once("./ware/model.log.php");
+include_once("./ware/model.response.php");
 // --------- interfaces ----------------------
 include_once("./ware/interface.init.php");
 include_once("./ware/interface.metier.php");
