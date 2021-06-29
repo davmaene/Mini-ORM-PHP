@@ -13,8 +13,8 @@ class Config implements Init{
     private $_password = "";
     protected $db = null;
 
-    public function __construct(){
-
+    protected function __inst(){
+        return $this;
     }
     public function onInit(){
         if($this->onConnexion()){
@@ -35,7 +35,7 @@ class Config implements Init{
         }
     }
     public function onLog($array, $to){
-        $file = ($to === 1) ? 'ini.initialize.ini' : 'log.file.ini';
+        $file = ($to === 1) ? './log/ini.initialize.ini' : './log/log.file.ini';
         $res = array();
         foreach($array as $key => $val)
         {
