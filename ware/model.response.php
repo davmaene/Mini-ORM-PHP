@@ -10,6 +10,7 @@ class Response{
         $this->statusText = $statusText;
         $this->body = $body;
     }
+    
     public function getStatus(){return $this->status;}
     public function getstatusText(){return $this->statusText;}
     public function getBody(){return $this->body;}
