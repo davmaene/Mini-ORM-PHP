@@ -84,11 +84,9 @@ class Config implements Init{
             }
             foreach ($tabExtraColumn as $key => $column) {
                 if(!(in_array($column, $fictiveTable, true))){
-                    $re = ($column === 'datastatus')
-                    ? $conn->prepare("ALTER TABLE `$table` ADD `$column` INT(11) NOT NULL DEFAULT '1' AFTER `$lastColumn`")
-                    : ($column === 'createdon')
+                    $re = ($column === 'createdon')
                     ? $conn->prepare("ALTER TABLE `$table` ADD `$column` VARCHAR(45) NOT NULL DEFAULT 'mid' AFTER `$lastColumn`")
-                    : $conn->prepare("ALTER TABLE `$table` ADD `$column` INT(11) NOT NULL DEFAULT '0' AFTER `$lastColumn`");
+                    : $conn->prepare("ALTER TABLE `$table` ADD `$column` INT(11) NOT NULL DEFAULT 18041995 AFTER `$lastColumn`");
                     try {
                         $re->execute();
                         $lastColumn = $column;
