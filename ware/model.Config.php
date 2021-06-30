@@ -23,16 +23,18 @@ class Config implements Init{
         }else return false;
     }
     public function onConnexion(){
-        try {
-            $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->db = $conn;
-            return true;
-        } catch (PDOException $e) {
-            $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Connexion to DB ".$this->_dbname],['Failed'],[$e->getMessage()]);
-            $this->onLog($exc,2);
-            return false;
-        }
+        if($this->db === null){
+            try {
+                $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->db = $conn;
+                return true;
+            } catch (PDOException $e) {
+                $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Connexion to DB ".$this->_dbname],['Failed'],[$e->getMessage()]);
+                $this->onLog($exc,2);
+                return false;
+            }
+        }else return true;
     }
     public function onLog($array, $to){
         $file = ($to === 1) ? './log/ini.initialize.ini' : './log/log.file.ini';

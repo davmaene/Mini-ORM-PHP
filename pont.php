@@ -10,6 +10,8 @@ include_once("./ware/interface.metier.php");
 // -------------------------------------------
 include_once("./ware/model.config.php");
 include_once("./ware/model.crud.php");
+// ---------- cunstomers class ---------------
+include_once("./models/cl.user.php");
 // ----------- main --------------------------
 require("./main/main.php");
 ?>
