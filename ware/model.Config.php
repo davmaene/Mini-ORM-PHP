@@ -13,7 +13,7 @@ class Config implements Init{
     private $_password = "";
     protected $db = null;
 
-    protected function __inst(){
+    public function __inst(){
         return $this;
     }
     public function onInit(){
