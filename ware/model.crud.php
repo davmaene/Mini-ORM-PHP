@@ -2,6 +2,12 @@
     class CRUD__ {
         public $db = null;
         public function __construct(){
+          $classname = get_class($this);
+          if(!empty($classname)){
+
+          }else return new Response(500, ["dav.me i can't get the className sorry"]);
+        }
+        protected function __creteClass(){
 
         }
         protected function declencher(){
@@ -12,7 +18,6 @@
             if(!is_object($this)) return new Response(401,[]);
             else{
                 $inst = $this;
-                var_dump(__NAMESPACE__);
                 return new Response(200,[$this]);
             }
         }
