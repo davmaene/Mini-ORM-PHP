@@ -11,7 +11,8 @@ class Response {
         $this->body = $body;
     }
     public function res(){
-        echo(json_encode($this, JSON_PRETTY_PRINT));
+        return $this;
+        // echo(json_encode($this, JSON_PRETTY_PRINT));
     }
     private function writeResponse($code = 0){
         $code = (int) $code;
