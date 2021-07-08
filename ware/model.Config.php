@@ -73,6 +73,7 @@ class Config implements Init{
     }
     public function onRunningQuery($query, $tablename){
         try {
+            $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
             $req = $this->db->prepare($query);
             $req->execute();
             return true; // done writting
