@@ -184,7 +184,7 @@ class Config implements Init{
     }
     private function onWriteMessage($args){
         die("<h3 style='color: red; text-align: center'>Error occured while trying to connect to db :: <span style='color: black'>". $this->_dbname."</span></h3>");
-
+        return false; // facultative
     }
 }
 ?>
