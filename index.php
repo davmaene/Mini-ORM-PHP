@@ -7,5 +7,4 @@ require_once("pont.php");
 $user = new User(1212, "david", "maene");
 $tb = $user->onAdd()->res();
 print_r($tb);
-// $user;
 ?>

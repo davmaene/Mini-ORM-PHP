@@ -5,7 +5,7 @@
 // mail : kubuya.darone.david@gmail.com | davidmened@gmail.com
 // created on june 27 2021 13H 31
 */
-// cette class est une configuration
+// cette class de configuration
 class Config implements Init{
 
     private $_dbname = "_dbmidleware";
@@ -67,7 +67,9 @@ class Config implements Init{
         if($this->onConnexion()){
             $this->addFiveExtraColumns();
             return true;
-        }else return false;
+        } else {
+            $this->onWriteMessage(false);
+        } 
     }
     public function onRunningQuery($query, $tablename){
         try {
@@ -86,10 +88,12 @@ class Config implements Init{
                 $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->db = $conn;
+                var_dump($conn);
                 return true;
             } catch (PDOException $e) {
                 $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Connexion to DB ".$this->_dbname],['Failed'],[$e->getMessage()]);
                 $this->onLog($exc,2);
+                // var_dump($exc);
                 return false;
             }
         }else return true;
@@ -177,6 +181,10 @@ class Config implements Init{
             $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Error shown Table from db : ".$this->_dbname],['Failed'],[$e->getMessage()]);
             $this->onLog($exc,2);
         } 
+    }
+    private function onWriteMessage($args){
+        die("<h3 style='color: red; text-align: center'>Error occured while trying to connect to db :: <span style='color: black'>". $this->_dbname."</span></h3>");
+
     }
 }
 ?>
