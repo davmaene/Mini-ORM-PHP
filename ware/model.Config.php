@@ -7,6 +7,7 @@
 */
 // cette class de configuration
 class Config implements Init {
+    
     private $_dialect = env['dialect'] ?? 'mysql';
     private $_dbname = env['dbname'];
     private $_username = env['username'];
