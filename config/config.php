@@ -9,7 +9,7 @@ $customer_password = "";
 // ---------------------------------
 define("env", // environement
      array(
-         "dialect" => isset($customer_dialect) ? $customer_dialect : "mysql",
+         "dialect" => $customer_dialect ?? "mysql",
          "dbname" => $customer_dbname ?? "test",
          "hostname" => $customer_hostname ?? "localhost",
          "username" => $customer_username ?? "root",
