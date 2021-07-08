@@ -6,7 +6,7 @@
 // created on june 27 2021 13H 31
 */
 // cette class de configuration
-class Config implements Init{
+class Config implements Init {
 
     private $_dbname = "_dbmidleware";
     private $_username = "root";
