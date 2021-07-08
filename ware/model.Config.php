@@ -7,7 +7,7 @@
 */
 // cette class de configuration
 class Config implements Init {
-    
+
     private $_dialect = env['dialect'] ?? 'mysql';
     private $_dbname = env['dbname'];
     private $_username = env['username'];
@@ -98,7 +98,7 @@ class Config implements Init {
                 // var_dump($exc);
                 return false;
             }
-        }else return true;
+        }else return false;
     }
     public function onLog($array, $to){
         $file = ($to === 1) ? './log/ini.initialize.ini' : './log/log.file.ini';
