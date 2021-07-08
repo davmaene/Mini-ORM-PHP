@@ -88,7 +88,6 @@ class Config implements Init{
                 $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->db = $conn;
-                var_dump($conn);
                 return true;
             } catch (PDOException $e) {
                 $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Connexion to DB ".$this->_dbname],['Failed'],[$e->getMessage()]);
