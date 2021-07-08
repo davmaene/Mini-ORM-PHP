@@ -47,7 +47,7 @@
                 return new Response(500,["initialization error "]);
             }
         }
-        public function onAdd(){ // create instance and add record to db
+        public function add(){ // create instance and add record to db
             $conf = new Config();
             $nclassname = $this->__creteClass();
             $vals_vers_db = [];
@@ -67,8 +67,8 @@
                 }else return new Response(405,["make sure u initialize values of $clname then try again !"]);
             }else return new Response(500,["error occured, make sure the $clname is correctely created !"]);
         }
-        public function onDelete($hdl){}
-        public function onEdit($hdl){}
-        public function onRetrive($hdl){}
+        public function delete($hdl){}
+        public function edit($hdl){}
+        public function get($hdl){}
     }
 ?>

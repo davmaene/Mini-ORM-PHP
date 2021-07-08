@@ -17,5 +17,4 @@ define("env", // environement
      ), 
 true);
 // 
-echo(env['dbname']);
 ?>

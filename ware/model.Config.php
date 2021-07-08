@@ -59,7 +59,6 @@ class Config implements Init {
         }return 500;
     }
     public function __construct(){
-        echo(env['dbname']);
         $this->onInit();
     }
     public function __inst(){

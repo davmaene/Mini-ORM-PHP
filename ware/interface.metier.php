@@ -1,8 +1,8 @@
 <?php 
 interface Metier_{
-    public function onAdd($hdl);
-    public function onDelete($hdl);
-    public function onEdit($hdl);
-    public function onRetrive($hdl);
+    public function add($hdl);
+    public function delete($hdl);
+    public function edit($hdl);
+    public function get($hdl);
 }
 ?>
