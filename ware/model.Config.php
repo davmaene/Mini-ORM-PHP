@@ -7,10 +7,10 @@
 */
 // cette class de configuration
 class Config implements Init {
-
-    private $_dbname = "_dbmidleware";
-    private $_username = "root";
-    private $_password = "";
+    private $_dialect = env['dialect'] ?? 'mysql';
+    private $_dbname = env['dbname'];
+    private $_username = env['username'];
+    private $_password = env['password'];
     protected $db = null;
 
     private function retrievesColumn($table, $alias){
@@ -58,6 +58,7 @@ class Config implements Init {
         }return 500;
     }
     public function __construct(){
+        echo(env['dbname']);
         $this->onInit();
     }
     public function __inst(){

@@ -1,10 +1,10 @@
 <?php 
 // custermer enviroment infos goes here
-$customer_dbname = ""; // the name of your database
-$customer_dialect = "mysql";
-$customer_hostname = "localhost";
-$customer_username = "root";
-$customer_password = "";
+$customer_dbname = "_dbmidleware"; // the name of your database
+$customer_dialect = "mysql"; // env cloud
+$customer_hostname = "localhost"; // name or ip of host
+$customer_username = "root"; // username to access to db
+$customer_password = ""; // password to access to db
 // dont modify code beyond this line
 // ---------------------------------
 define("env", // environement
@@ -17,4 +17,5 @@ define("env", // environement
      ), 
 true);
 // 
+echo(env['dbname']);
 ?>
