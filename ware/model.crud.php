@@ -47,7 +47,7 @@
                 return new Response(500,["initialization error "]);
             }
         }
-        public function add(){ // create instance and add record to db
+        public function save(){ // create instance and add record to db
             $conf = new Config();
             $nclassname = $this->__creteClass();
             $vals_vers_db = [];
