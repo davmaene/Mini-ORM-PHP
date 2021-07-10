@@ -1,5 +1,5 @@
 <?php 
-    class CRUD__ {
+    class CRUD__ implements Metier_{
         public function __construct(){}
 
         private function __SQLCreateInstance($tablename, Object $properties){
@@ -67,8 +67,8 @@
                 }else return new Response(405,["make sure u initialize values of $clname then try again !"]);
             }else return new Response(500,["error occured, make sure the $clname is correctely created !"]);
         }
-        public function delete($hdl){}
-        public function edit($hdl){}
-        public function get($hdl){}
+        public function delete(){}
+        public function edit(){}
+        public function get(){}
     }
 ?>
