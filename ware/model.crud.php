@@ -64,7 +64,7 @@
                         case 503: return new Response(503, []);
                         default: return new Response(505, []);
                     }
-                }else return new Response(405,["make sure u initialize values of $clname then try again !"]);
+                }else return new Response(405,["make sure you initialize values of $clname then try again !"]);
             }else return new Response(500,["error occured, make sure the $clname is correctely created !"]);
         }
         public function delete(){}
