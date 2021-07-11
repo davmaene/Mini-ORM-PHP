@@ -87,9 +87,9 @@
 
             $line = "SELECT * FROM `$nclassname` WHERE ";
             foreach ($clauses as $key => $value) {
-                $value_ = is_numeric($value) ? $value : "'".$value."'";
                 ++$nblines;
-                $line .= ((int) $nblines === count($clauses)) ? "`$key` = $value_" : "`$key` = $value_ AND";            
+                $value_ = is_numeric($value) ? $value : "'".$value."'";
+                $line .= ((int) $nblines === count($clauses)) ? "`$key` = $value_" : "`$key` = $value_ AND ";            
             }
             return array("nbl" => $nblines, "cl" => count($clauses), "line" => $line);
         }
