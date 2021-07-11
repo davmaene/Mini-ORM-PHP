@@ -71,6 +71,7 @@
         public function delete(){}
         public function edit(){}
         public function getOne(Array $clauses = null){
+            $nblines = 0;
             $tabProperties = [];
             $properties = json_encode($this); 
             $properties = json_decode($properties, true);
@@ -83,11 +84,16 @@
             if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
             foreach ($properties as $key => $value) array_push($tabProperties, $key);
             foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property $key in Instance ".get_class($this)]);
-            
-            $line = "";
+
+            $line = "SELECT * FROM `$nclassname` WHERE ";
             foreach ($clauses as $key => $value) {
-                
+                $value_ = is_numeric($value) ? $value : "'".$value."'";
+                ++$nblines;
+                $line .= 
+                         ((int) $nblines === count($clauses)) 
+                         ? "`$key` = $value_" : "`$key` = $value_ AND";;
             }
+            return array("nbl" => $nblines, "cl" => count($clauses), "line" => $line);
         }
         public function getAll(Array $clause = null){
 
