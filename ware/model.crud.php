@@ -24,7 +24,7 @@
             if($r) return true;
             else return false;
         } 
-        protected function __creteClass(){
+        protected function __createClass(){
             $prefixe = "__tbl_";
             $classname = get_class($this);
             if(!empty($classname)){
@@ -41,7 +41,7 @@
         public function onBuild(){ // create on instance in to the db
             if(!is_object($this)) return new Response(401,[]);
             else{
-                if($this->__SQLCreateInstance($this->__creteClass(), $this))
+                if($this->__SQLCreateInstance($this->__createClass(), $this))
                 return new Response(200,[]);
                 else 
                 return new Response(500,["initialization error "]);
@@ -49,7 +49,7 @@
         }
         public function save(){ // create instance and add record to db
             $conf = new Config();
-            $nclassname = $this->__creteClass();
+            $nclassname = $this->__createClass();
             $vals_vers_db = [];
             $clname = get_class($this);
             $properties = $this;
@@ -64,7 +64,7 @@
                         case 503: return new Response(503, []);
                         default: return new Response(505, []);
                     }
-                }else return new Response(405,["make sure you initialize values of $clname then try again !"]);
+                }else return new Response(405,["make sure you'v initialized values of $clname then try again !"]);
             }else return new Response(500,["error occured, make sure the $clname is correctely created !"]);
         }
         public function delete(){}
