@@ -72,6 +72,19 @@ class Config implements Init {
             $this->onWriteMessage(false);
         } 
     }
+    public function onFetchingOne($query, $tablename){
+        try {
+            $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
+            $req = $this->db->prepare($query);
+            $req->execute();
+            $req = $req->fetchAll();
+            return !empty($req) && count($req) > 0 ? $req[0] : array();
+        } catch (PDOException $e) {
+            $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Error writting query in $tablename table"],['Failed'],[$e->getMessage()]);
+            $this->onLog($exc,2);
+            return 500; // faild writting
+        }
+    }
     public function onRunningQuery($query, $tablename){
         try {
             $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
