@@ -6,5 +6,6 @@ require_once("pont.php");
 
 $user = new User(1212, "david", "maene");
 $tb = $user->save();
-var_dump($tb);
+$us = $user->getOne();
+var_dump($us);
 ?>

@@ -70,7 +70,11 @@
         public function delete(){}
         public function edit(){}
         public function getOne($clause = null){
-            
+            if($clause === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
+            if(!is_array($clause)) return new Response(401, ["the passed param must be an array"]);
+            $conf = new Config();
+            $nclassname = $this->__createClass();
+
         }
         public function getAll($clause = null){
 
