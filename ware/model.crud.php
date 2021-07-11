@@ -75,6 +75,7 @@
             $tabProperties = [];
             $properties = json_encode($this); 
             $properties = json_decode($properties, true);
+            $retResponse = [];
 
             $conf = new Config();
             $nclassname = $this->__createClass();
@@ -91,9 +92,12 @@
                 $query .= ((int) $nblines === count($clauses)) ? "`$key` = $value_" : "`$key` = $value_ AND ";            
             }
             $res = $conf->onFetchingOne($query, $nclassname);
-            if($res !== 0){
-                $tab = [];
-                
+            if($res !== 500){
+                foreach($res as $ky => $val){
+                    echo($val);
+                    echo("\n");
+                }
+                // var_dump($res);
             }else return new Response(500, []);
             
         }
