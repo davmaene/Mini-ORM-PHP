@@ -39,7 +39,8 @@
             return $conf->onInit() ? new Response(202, []) : new Response(500, []);
         }
         private function onBuild(){ // create on instance in to the db
-            if(!is_object($this)) return new Response(401,[]);
+            if(!is_object($this)) 
+                return new Response(401,[]);
             else{
                 if($this->__SQLCreateInstance($this->__createClass(), $this))
                 return new Response(200,[]);
@@ -69,14 +70,16 @@
         }
         public function delete(){}
         public function edit(){}
-        public function getOne(Array $clause = null){
+        public function getOne(Array $clauses = null){
+            $properties = json_encode($this); 
+            $properties = json_decode($properties, true);
             $clauseElements = [];
-            if($clause === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
-            if(!is_array($clause)) return new Response(401, ["the passed in getOne method param must be an array"]);
+            if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
+            if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
             $conf = new Config();
             $nclassname = $this->__createClass();
-
-            return $nclassname;
+            foreach ($clauses as $key => $value) if(!in_array($key, $properties, true)) return new Response(404, ["there is no property $key in Instance ".get_class($this)]);
+            return $properties;
         }
         public function getAll(Array $clause = null){
 
