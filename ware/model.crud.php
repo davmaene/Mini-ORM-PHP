@@ -93,11 +93,12 @@
             }
             $res = $conf->onFetchingOne($query, $nclassname);
             if($res !== 500){
-                foreach($res as $ky => $val){
-                    echo($val);
-                    echo("\n");
+                for($i = 0; $i < count($res); $i++){
+                    for($j = 0; $j < count($tabProperties); $j++){
+                        array_push($retResponse, new User($res[$i][$j],'23','23'));
+                    }
                 }
-                // var_dump($res);
+                return $retResponse;
             }else return new Response(500, []);
             
         }
