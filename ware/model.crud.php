@@ -24,7 +24,7 @@
             if($r) return true;
             else return false;
         } 
-        protected function __createClass(){
+        private function __createClass(){
             $prefixe = "__tbl_";
             $classname = get_class($this);
             if(!empty($classname)){
@@ -34,11 +34,11 @@
             //   echo($classname);
             }else return new Response(500, ["dav.me i can't get the className property"]);
         }
-        protected function declencher(){
+        private function declencher(){
             $conf = new Config();
             return $conf->onInit() ? new Response(202, []) : new Response(500, []);
         }
-        public function onBuild(){ // create on instance in to the db
+        private function onBuild(){ // create on instance in to the db
             if(!is_object($this)) return new Response(401,[]);
             else{
                 if($this->__SQLCreateInstance($this->__createClass(), $this))
@@ -69,6 +69,11 @@
         }
         public function delete(){}
         public function edit(){}
-        public function get(){}
+        public function getOne($clause = null){
+            
+        }
+        public function getAll($clause = null){
+
+        }
     }
 ?>
