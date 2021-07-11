@@ -71,15 +71,23 @@
         public function delete(){}
         public function edit(){}
         public function getOne(Array $clauses = null){
+            $tabProperties = [];
             $properties = json_encode($this); 
             $properties = json_decode($properties, true);
-            $clauseElements = [];
-            if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
-            if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
+
             $conf = new Config();
             $nclassname = $this->__createClass();
-            foreach ($clauses as $key => $value) if(!in_array($key, $properties, true)) return new Response(404, ["there is no property $key in Instance ".get_class($this)]);
-            return $properties;
+            $clauseElements = [];
+
+            if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
+            if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
+            foreach ($properties as $key => $value) array_push($tabProperties, $key);
+            foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property $key in Instance ".get_class($this)]);
+            
+            $line = "";
+            foreach ($clauses as $key => $value) {
+                
+            }
         }
         public function getAll(Array $clause = null){
 
