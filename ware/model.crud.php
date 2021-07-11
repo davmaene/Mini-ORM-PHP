@@ -69,14 +69,16 @@
         }
         public function delete(){}
         public function edit(){}
-        public function getOne($clause = null){
+        public function getOne(Array $clause = null){
+            $clauseElements = [];
             if($clause === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
             if(!is_array($clause)) return new Response(401, ["the passed in getOne method param must be an array"]);
             $conf = new Config();
             $nclassname = $this->__createClass();
 
+            return $nclassname;
         }
-        public function getAll($clause = null){
+        public function getAll(Array $clause = null){
 
         }
     }
