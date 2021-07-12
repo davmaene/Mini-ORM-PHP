@@ -84,7 +84,7 @@
             if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
             if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
             foreach ($properties as $key => $value) array_push($tabProperties, $key);
-            foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property $key in Instance $objectName "]);
+            foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property :: $key :: in Instance :: $objectName ::"]);
 
             $query = "SELECT * FROM `$nclassname` WHERE ";
             foreach ($clauses as $key => $value) {
@@ -95,14 +95,13 @@
             $rem = $conf->onFetchingOne($query, $nclassname);
             if($rem !== 500){
                 for($i = 0; $i < count($rem); $i++){
-                    $tmp_ = null;
                     foreach ($tabProperties as $key => $value) {
                         $this->$value = $rem[$i][$value];
                     }
                     $item = (object) get_object_vars($this);
                     array_push($retResponse, $item);
                 }
-                return count($retResponse) > 0 ? count($retResponse) === 1 ? $retResponse[0] : $retResponse : $$retResponse;
+                return count($retResponse) > 0 ? count($retResponse) === 1 ? $retResponse[0] : $retResponse : $retResponse;
             }else return new Response(500, []);
         }
         public function getAll(Array $clause = null){
