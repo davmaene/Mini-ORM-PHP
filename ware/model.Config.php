@@ -78,7 +78,7 @@ class Config implements Init {
             $req = $this->db->prepare($query);
             $req->execute();
             $req = $req->fetchAll();
-            return !empty($req) && count($req) > 0 ? $req[0] : array();
+            return !empty($req) && count($req) > 0 ? $req : array();
         } catch (PDOException $e) {
             $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Error writting query in $tablename table"],['Failed'],[$e->getMessage()]);
             $this->onLog($exc,2);

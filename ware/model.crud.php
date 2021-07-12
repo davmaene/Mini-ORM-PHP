@@ -73,6 +73,7 @@
         public function getOne(Array $clauses = null){
             $nblines = 0;
             $tabProperties = [];
+            $objectName = get_class($this);
             $properties = json_encode($this); 
             $properties = json_decode($properties, true);
             $retResponse = [];
@@ -83,7 +84,7 @@
             if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
             if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
             foreach ($properties as $key => $value) array_push($tabProperties, $key);
-            foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property $key in Instance ".get_class($this)]);
+            foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property $key in Instance $objectName "]);
 
             $query = "SELECT * FROM `$nclassname` WHERE ";
             foreach ($clauses as $key => $value) {
@@ -91,16 +92,17 @@
                 $value_ = is_numeric($value) ? $value : "'".$value."'";
                 $query .= ((int) $nblines === count($clauses)) ? "`$key` = $value_" : "`$key` = $value_ AND ";            
             }
-            $res = $conf->onFetchingOne($query, $nclassname);
-            if($res !== 500){
-                for($i = 0; $i < count($res); $i++){
-                    for($j = 0; $j < count($tabProperties); $j++){
-                        array_push($retResponse, new User($res[$i][$j],'23','23'));
+            $rem = $conf->onFetchingOne($query, $nclassname);
+            if($rem !== 500){
+                for($i = 0; $i < count($rem); ++$i){
+                    foreach ($tabProperties as $key => $value) {
+                        $this->$value = $rem[$i][$value];
                     }
+                    array_push($retResponse, $this);
+                    var_dump($this);
                 }
                 return $retResponse;
             }else return new Response(500, []);
-            
         }
         public function getAll(Array $clause = null){
 
