@@ -1,15 +1,13 @@
 <?php 
-
-require_once("pont.php");
+require_once("pont.php"); // don't delete or modify this line
 // ----------------------
-// $config = new Main;
-$clause = array("fsname" => "dorone");
-$user = new User(1212, "dorone", "maene");
+$where = array("fsname" => "david");
+$user = new User(null, "dorone", "maene");
 // $tb = $user->save();
-$us = $user->getOne($clause);
+$us = $user->getOne($where);
 ?>
 <pre>
 <?php 
-    print_r($us);
+    var_dump($us);
 ?>
 </pre>

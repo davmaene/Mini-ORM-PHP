@@ -94,14 +94,15 @@
             }
             $rem = $conf->onFetchingOne($query, $nclassname);
             if($rem !== 500){
-                for($i = 0; $i < count($rem); ++$i){
+                for($i = 0; $i < count($rem); $i++){
+                    $tmp_ = null;
                     foreach ($tabProperties as $key => $value) {
                         $this->$value = $rem[$i][$value];
                     }
-                    array_push($retResponse, $this);
-                    var_dump($this);
+                    $item = (object) get_object_vars($this);
+                    array_push($retResponse, $item);
                 }
-                return $retResponse;
+                return count($retResponse) > 0 ? count($retResponse) === 1 ? $retResponse[0] : $retResponse : $$retResponse;
             }else return new Response(500, []);
         }
         public function getAll(Array $clause = null){
