@@ -106,7 +106,6 @@
             }else return new Response(500, []);
         }
         public function getAll(Array $clause = null){
-
         }
     }
 ?>

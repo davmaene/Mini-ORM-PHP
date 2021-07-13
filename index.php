@@ -12,7 +12,5 @@ $us = $user->getOne($where);
 ?>
 
 <pre>
-<?php 
-    echo$us->results();
-?>
+<?= $us->results() ?>
 </pre>
