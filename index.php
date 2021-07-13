@@ -10,8 +10,9 @@ $user = new User(null, "dorone", "maene");
 // $tb = $user->save();
 $us = $user->getOne($where);
 ?>
+
 <pre>
 <?php 
-    var_dump($us);
+    echo$us->results();
 ?>
 </pre>

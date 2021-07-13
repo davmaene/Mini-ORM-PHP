@@ -101,7 +101,8 @@
                     $item = (object) get_object_vars($this);
                     array_push($retResponse, $item);
                 }
-                return count($retResponse) > 0 ? count($retResponse) === 1 ? $retResponse[0] : $retResponse : $retResponse;
+                $result = count($retResponse) > 0 ? count($retResponse) === 1 ? $retResponse[0] : $retResponse : $retResponse;
+                return new Res();
             }else return new Response(500, []);
         }
         public function getAll(Array $clause = null){
