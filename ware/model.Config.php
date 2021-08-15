@@ -12,6 +12,7 @@ class Config implements Init {
     private $_dbname = env['dbname'];
     private $_username = env['username'];
     private $_password = env['password'];
+    private $_host = env['hostname'];
     protected $db = null;
 
     private function retrievesColumn($table, $alias){
