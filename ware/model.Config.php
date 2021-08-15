@@ -186,8 +186,6 @@ class Config implements Init {
         try {
             $req->execute();
             $req = $req->fetchAll();
-            var_dump($req);
-            echo("<br/>---------------------------------------</br>");
             if(count($req) > 0){
                 foreach ($req as $key => $table) {
                     $this->verifyAndWriteExtraColumns($conn, $table[0]);
