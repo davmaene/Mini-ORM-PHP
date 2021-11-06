@@ -12,7 +12,6 @@ class Config implements Init {
     private $_dbname = env['dbname'];
     private $_username = env['username'];
     private $_password = env['password'];
-    private $_host = env['hostname'];
     protected $db = null;
 
     private function retrievesColumn($table, $alias){
@@ -37,13 +36,13 @@ class Config implements Init {
             $cls = $this->retrievesColumn($table, false);
             $tabvalues = [];
             if(strlen($cls) > 0){
-                $cls = substr($cls,strpos($cls,',',0)+1);
+                $cls = substr($cls,strpos($cls,',',0) + 1);
                 if($cls){
-                    array_push($tbValues, $indentified);
-                    array_push($tbValues, 0);
-                    array_push($tbValues, 0);
-                    array_push($tbValues, 1);
-                    array_push($tbValues, date('d/m/Y, H:i:s'));
+                    // array_push($tbValues, $indentified);
+                    // array_push($tbValues, 0);
+                    // array_push($tbValues, 0);
+                    // array_push($tbValues, 1);
+                    // array_push($tbValues, date('d/m/Y, H:i:s'));
                     foreach ($tbValues as $key => $value) {$val = ("'".$value."'");array_push($tabvalues, $val);}
                     try {
                         $vls = implode(',',$tabvalues);
@@ -67,7 +66,7 @@ class Config implements Init {
     }
     public function onInit(){
         if($this->onConnexion()){
-            $this->addFiveExtraColumns();
+            // $this->addFiveExtraColumns();
             return true;
         } else {
             $this->onWriteMessage(false);
@@ -75,10 +74,12 @@ class Config implements Init {
     }
     public function onFetchingOne($query, $tablename){
         try {
-            $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
+            // echo($query);
+            // $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
             $req = $this->db->prepare($query);
             $req->execute();
             $req = $req->fetchAll();
+            // var_dump($req);
             return !empty($req) && count($req) > 0 ? $req : array();
         } catch (PDOException $e) {
             $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Error writting query in $tablename table"],['Failed'],[$e->getMessage()]);
@@ -88,7 +89,8 @@ class Config implements Init {
     }
     public function onRunningQuery($query, $tablename){
         try {
-            $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
+            // echo($query);
+            // $this->addFiveExtraColumns(); // ceci est important quand il faut que j'ajoute les extras column avant d'ajouter les datas
             $req = $this->db->prepare($query);
             $req->execute();
             return true; // done writting
@@ -101,7 +103,7 @@ class Config implements Init {
     public function onConnexion(){
         if($this->db === null){
             try {
-                $conn = new PDO("mysql:host=$this->_host;dbname=$this->_dbname", "$this->_username", "$this->_password");
+                $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->db = $conn;
                 return true;
@@ -114,7 +116,7 @@ class Config implements Init {
         }else return false;
     }
     public function onLog($array, $to){
-        $file = ($to === 1) ? './log/ini.initialize.ini' : './log/log.file.ini';
+        $file = ($to === 1) ? './middleware/log/ini.initialize.ini' : './middleware/log/log.file.ini';
         $res = array();
         foreach($array as $key => $val)
         {
@@ -129,8 +131,22 @@ class Config implements Init {
         $this->safefilerewrite(implode("\r\n", $res),$file);
     }
     private function safefilerewrite($dataToSave, $fileName){
-        if ($fp = fopen($fileName, 'a++'))
+        $fp = null;
+        try {
+            if(file_exists($fileName)){
+                $fp = fopen($fileName, 'a++');
+            }
+            else{
+                $fileName = "ini.initialize.ini";
+                $fp = fopen($fileName, "a++");
+            }
+        } catch (\Throwable $th) {
+            $fileName = "ini.initialize.ini";
+            $fp = fopen($fileName, "a++");
+        }
+        if ($fp)
         {
+            chmod($fileName, 0777);
             $startTime = microtime(TRUE);
             do
             {            
@@ -199,8 +215,8 @@ class Config implements Init {
     }
     private function onWriteMessage($args){
         die("
-            <h3 style='color: red; text-align: center'>Error occured while trying to connect to db :: <span style='color: black'>". $this->_dbname."</span></h3>
-            <p style='text-align: center; font-weight: bold'>for more information search the file <a href='./log/log.file.ini'>log file</a></p>
+            <h3 style='color: red; text-align: center'>Une erreur vient de produire lors de la tentative de connexion à la base des données :: <span style='color: black'>". $this->_dbname."</span></h3>
+            <p style='text-align: center; font-weight: bold'>for more informations <a href='./middleware/log/log.file.ini'>log file</a></p>
         ");
         return false; // facultative
     }
