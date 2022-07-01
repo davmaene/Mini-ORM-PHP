@@ -2,8 +2,8 @@
 interface Metier_{
     public function save();
     public function delete();
-    public function edit();
-    public function getOne(Array $clause = null);
-    public function getAll(Array $clause = null);
+    public function edit(Array $clause, Array $sets);
+    public function getOne(Array $clause = null, Array $jointure = null, Array $sort = null);
+    public function getAll(Array $clause = null, Array $jointure = null);
 }
 ?>

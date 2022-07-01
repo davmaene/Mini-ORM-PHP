@@ -10,9 +10,9 @@ class Response {
         $this->statusText = $this->writeResponse($status);
         $this->body = $body;
     }
-    public function res(){
-        return $this;
-        // echo(json_encode($this, JSON_PRETTY_PRINT));
+    public function print(){
+        // return $this;
+        return (json_encode($this, JSON_PRETTY_PRINT));
     }
     private function writeResponse($code = 0){
         $code = (int) $code;
@@ -37,7 +37,7 @@ class Response {
                 // break;
         }
     }
-    public function getStatus(){return $this->status;}
+    public function getStatus(){return (int) $this->status;}
     public function getstatusText(){return $this->statusText;}
     public function getBody(){return $this->body;}
 }
