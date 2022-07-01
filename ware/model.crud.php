@@ -190,7 +190,7 @@
                             $thereisjointure = true;
                             foreach ($va['clause'] as $key => $value___) {
                                 ++$nblines;
-                                $value_ = is_numeric($value___) ? $value___ : "'".$value___."'";
+                                $value_ = is_numeric($value___) && strlen($value___) < 3 ? $value___ : "'".$value___."'";
                                 $cl .= ((int) $nblines === count($va['clause'])) ? "$joiTable.$key = $value_" : "$joiTable.$key = $value_ AND "; 
                                 // " $joiTable.$key = $value_ ";
                             }
