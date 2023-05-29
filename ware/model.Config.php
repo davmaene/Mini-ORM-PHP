@@ -2,18 +2,18 @@
 /* 
 // Auther : davmaene
 // conatact : +243 970 284 772
-// mail : kubuya.darone.david@gmail.com | davidmened@gmail.com
+// mail : kubuya.darone.david@gmail.com | davidmened@gmail.com | developer.david.maene@gmail.com
 // created on june 27 2021 13H 31
 */
 // cette class de configuration
 
 class Config implements Init {
 
-    private $_dialect = env['dialect'] ?? 'mysql';
+    private $_dialect = env['dialect'];
+    private $_host = env['hostname'];
     private $_dbname = env['dbname'];
     private $_username = env['username'];
     private $_password = env['password'];
-    protected $db = null;
 
     private function retrievesColumn($table, $alias){
         $columnname = [];
@@ -49,6 +49,7 @@ class Config implements Init {
                     try {
                         $vls = implode(',',$tabvalues);
                         $req = $this->db->prepare("INSERT INTO $table ($cls) VALUES ($vls)");
+                        var_dump($req);
                         $req->execute();
                         return 200;
                     } catch (PDOException $e) {
@@ -85,7 +86,7 @@ class Config implements Init {
             $req = $this->db->prepare($query);
             $req->execute();
             $req = $req->fetchAll();
-            // var_dump($req);
+            // var_dump($req[0]);
             return !empty($req) && count($req) > 0 ? $req : array();
         } catch (PDOException $e) {
             $exc = new LogNotification([Date('d/m/Y, H:i:s')],["Error writting query in $tablename table"],['Failed'],[$e->getMessage()]);
@@ -109,9 +110,11 @@ class Config implements Init {
     }
 
     public function onConnexion(){
-        if($this->db === null){
+        $host = $this->_host;
+        $dialect = $this->_dialect;
+        if(1){
             try {
-                $conn = new PDO("mysql:host=localhost;dbname=$this->_dbname", "$this->_username", "$this->_password");
+                $conn = new PDO("$dialect:host=$host;dbname=$this->_dbname", "$this->_username", "$this->_password");
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->db = $conn;
                 return true;

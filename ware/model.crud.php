@@ -1,4 +1,5 @@
 <?php 
+    include_once("model.Config.php");
     class CRUD__ implements Metier_{
         public function __construct(){}
 
@@ -25,7 +26,7 @@
             else return false;
         } 
         private function __createClass(){
-            $prefixe = "tbl_";
+            $prefixe = "__tbl_";
             $classname = get_class($this);
             if(!empty($classname)){
             //   if(!strpos($classname,"s",-1)) $classname .= "s";
@@ -48,6 +49,16 @@
                 return new Response(500,["initialization error "]);
             }
         }
+        public function runSQL(array $options = null){
+            $conf = new Config();
+            if(is_array($options)){
+                $sql = $options['sql'];
+                $tbl = $options['table'];
+                $res = $conf->onFetchingOne($sql, $tbl);
+                if($res !== 500) return new Response(200, "Operation done ! ");
+                else return new Response(500, $res);
+            }else return new Response(401, "Options parameter must be an array !");
+        }
         public function save(){ // create instance and add record to db
             $conf = new Config();
             $nclassname = $this->__createClass();
@@ -67,7 +78,7 @@
                             $resp = $conf->onFetchingOne($lastinsertedrow, $nclassname);
                             $row = $this->getOne(array(
                                 "id" => $resp[0]["LAST_INSERT_ID()"]
-                            ));
+                            ), null, null, "AND");
                             return  $row ?? new Response(200, $row);
                         case 503: return new Response(503, []);
                         default: return new Response(505, []);
@@ -91,34 +102,37 @@
                 foreach ($properties as $key => $value) array_push($tabProperties, $key);
                 foreach ($clauses as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property :: $key :: in Instance :: $objectName :: bad params in clause"]);
 
-                // foreach ($properties as $key => $value) array_push($tabProperties, $key);
                 foreach ($sets as $key => $value) if(!in_array($key, $tabProperties, true)) return new Response(401, ["there is no property :: $key :: in Instance :: $objectName :: bad params in SETS"]);
 
                 $query = "UPDATE $nclassname SET ";
-                $cls = " WHERE";
+                $cls = " WHERE ";
+
                 foreach ($sets as $k => $val){
                     ++$nblines;
-                    $value_ = is_numeric($val) ? $value : "'".$val."'";
-                    $query .= ((int) $nblines === count($sets)) ? "`$key` = $value_" : "`$key` = $value_ AND "; 
+                    $value_ = is_numeric($val) ? $val : "'".$val."'";
+                    $query .= ((int) $nblines === count($sets)) ? "`$k` = $value_" : "`$k` = $value_ , "; 
                 }
 
                 $nblines = 0; // reinitilaize compter 
 
                 foreach ($clauses as $key => $value) {
                     ++$nblines;
-                    $value_ = is_numeric($value) ? $value : "'".$value."'";
+                    $value_ = is_numeric($value) && strlen($value) < 3 ? $value : "'".$value."'";
                     $cls .= ((int) $nblines === count($clauses)) ? " `$key` = $value_" : " `$key` = $value_ AND ";            
                 }
+
                 $query .= $cls;
                 $resp = $conf->onRunningQuery($query, $nclassname);
+
                 if(is_bool($resp) && $resp === true){
-                    $getit = $this->getOne($clauses);
+                    $getit = $this->getOne($clauses, null, null, "AND");
                     return $getit;
                 }else return new Response(500, ["Error occured when trying to run Query on TABLE :: $nclassname "]);
             }else return new Response(401, ["CLAUSE and SETS must be instance of array"]);
         }
         // -------------------------- CRUD ``` RETRIEVE ONE ``` -------
-        public function getOne(Array $clauses = null, Array $joiture = null, $sort = null){
+        public function getOne(Array $clauses = null, Array $joiture = null, $sort = null, $connection){
+            
             $nblines = 0;
             $tabProperties = [];
             $objectName = get_class($this);
@@ -137,8 +151,8 @@
             $query = "SELECT * FROM `$nclassname` WHERE ";
             foreach ($clauses as $key => $value) {
                 ++$nblines;
-                $value_ = is_numeric($value) && strlen($value) < 2 ? $value : "'".$value."'";
-                $query .= ((int) $nblines === count($clauses)) ? " `$key` = $value_" : " `$key` = $value_ AND ";            
+                $value_ = is_numeric($value) && strlen($value) < 3 ? $value : "'".$value."'";
+                $query .= ((int) $nblines === count($clauses)) ? " `$key` = $value_" : " `$key` = $value_ $connection";            
             }
             $query .= " LIMIT 1";
             $rem = $conf->onFetchingOne($query, $nclassname);
@@ -155,7 +169,7 @@
             }else return new Response(500, []);
         }
         // --------------------------
-        public function getAll(Array $clauses = null, Array $jointure = null){
+        public function getAll( Array $clauses = null, Array $jointure = null, $connection = null){
             $nblines = 0;
             $tabProperties = [];
             $objectName = get_class($this);
@@ -164,11 +178,12 @@
             $retResponse = [];
             $thereisjointure = false;
 
+            $tablesOnJointure = [];
+
             $conf = new Config();
             $nclassname = $this->__createClass();
             $query = "SELECT * FROM `$nclassname`";
 
-            // if($clauses === null) return new Response(401, ["a getOne method must have a clause passed as parame"]);
             if($clauses !== null){
                 if(!is_array($clauses)) return new Response(401, ["the passed in getOne method param must be an array"]);
                 foreach ($properties as $key => $value) array_push($tabProperties, $key);
@@ -176,13 +191,15 @@
             }
             if($jointure !== null){
                 if(is_array($jointure)){
-                    // && isset($jointure["on"]) && isset($jointure["table"])
                     $cl = "";
-
+                    $thereisjointure = true;
                     foreach ($jointure as $k => $va) {
-                        $joiTable = $va['table'];
+                        $o = $va['table'];
+                        array_push($tablesOnJointure, $o);
+                        $joiTable = $o->__createClass();
                         $handLeft = $va['on'][0];
                         $handRight = $va['on'][1];
+                        $columns= isset($va['columns']) ? $va['columns'] : [];
                         // var_dump($va);
                         if(isset($va['clause'])){
 
@@ -190,35 +207,33 @@
                             $thereisjointure = true;
                             foreach ($va['clause'] as $key => $value___) {
                                 ++$nblines;
-                                $value_ = is_numeric($value___) && strlen($value___) < 3 ? $value___ : "'".$value___."'";
+                                $value_ = is_numeric($value___) && strlen($value) < 3 ? $value___ : "'".$value___."'";
                                 $cl .= ((int) $nblines === count($va['clause'])) ? "$joiTable.$key = $value_" : "$joiTable.$key = $value_ AND "; 
-                                // " $joiTable.$key = $value_ ";
                             }
                         }
                         if(isset($va['joinedto'])){
                             $joinedto = $va['joinedto'];
-                            $query .= " JOIN `$joiTable` ON $joiTable.$handRight = $joinedto.$handLeft ";
-                        }else $query .= " JOIN `$joiTable` ON $joiTable.$handRight = $nclassname.$handLeft ";
+                            $query .= " INNER JOIN `$joiTable` ON $joiTable.$handRight = $joinedto.$handLeft ";
+                        }else $query .= " INNER JOIN `$joiTable` ON $joiTable.$handRight = $nclassname.$handLeft ";
                     }
                     $query .= " $cl ";
                 }
             }
+
             $nblines = 0;
+
             if(count($tabProperties) > 0){
-                $query .= $thereisjointure ? " AND " : " WHERE ";
+                $query .= strpos($query, "AND") > 0 ? " AND " : " WHERE ";
                 foreach ($clauses as $key => $value) {
                     ++$nblines;
                     $value_ = is_numeric($value) ? $value : "'".$value."'";
                     $query .= ((int) $nblines === count($clauses)) ? "$nclassname.$key = $value_" : "$nclassname.$key = $value_ AND ";            
                 }
-                // $query .= " AND `int_type_id` = 1";
             }
-            // else $query .= " WHERE `int_type_id` = 1";
 
             $rem = $conf->onFetchingOne($query, $nclassname);
             $results = [];
             if($rem !== 500){
-                // var_dump($rem[0]);
                 if(count($tabProperties) > 0){
                     for($i = 0; $i < count($rem); $i++){
                         foreach ($tabProperties as $key => $value) {
@@ -227,19 +242,50 @@
                         $item = (object) get_object_vars($this);
                         array_push($retResponse, $item);
                     }
-                    $results = count($retResponse) > 0 ? (count($retResponse) === 1 ? $retResponse[0] : $retResponse) : $retResponse;
+                    $results = $retResponse;
                     return new Response(200, $results); 
                 }else{
-                    // var_dump($properties);
-                    // return null;
                     for($i = 0; $i < count($rem); $i++){
                         foreach ($properties as $key => $value) {
                             $this->$key = $rem[$i][$key];
                         }
                         $item = (object) get_object_vars($this);
-                        array_push($retResponse, $item);
+
+                        if(is_array($jointure)){
+                            $J = [];
+                            $clname = "";
+                            
+                            for ($o = 0; $o < count($tablesOnJointure); $o++) {
+                                $toj = $tablesOnJointure[$o];
+                                $clname = ($toj->__createClass());
+                                $props = json_encode($toj); 
+                                $props = json_decode($props, true);
+
+                                // var_dump($toj);
+
+                                foreach ($props as $key => $value) {
+                                    $toj->$key = $rem[$i][$key];
+                                }
+
+                                $clns = [];
+
+                                foreach ($columns as $key => $valc) {
+                                    array_push($clns, 
+                                        array(
+                                            $valc => $toj->$valc
+                                        )
+                                    );
+                                }
+                                $item->$clname = $clns;
+                            }
+                            array_push($retResponse, $item);
+                            // $tmp = $item;
+                        }else{
+                            array_push($retResponse, $item);
+                        }
                     }
-                    $results = count($retResponse) > 0 ? (count($retResponse) === 1 ? $retResponse[0] : $retResponse) : $retResponse;
+                    // count($retResponse) > 0 ? (count($retResponse) === 1 ? $retResponse[0] : $retResponse) :
+                    $results = $retResponse;
                     return new Response(200, $results);
                 }
             }else return new Response(500, []);
